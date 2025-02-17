@@ -1,10 +1,10 @@
 package com.example.bookstore.controller;
 
-import com.modul2.bookstore.dto.UserDTO;
-import com.modul2.bookstore.entities.User;
-import com.modul2.bookstore.mapper.UserMapper;
-import com.modul2.bookstore.repository.UserRepository;
-import com.modul2.bookstore.service.UserService;
+import com.example.bookstore.dto.UserDTO;
+import com.example.bookstore.entities.User;
+import com.example.bookstore.mapper.UserMapper;
+import com.example.bookstore.repository.UserRepository;
+import com.example.bookstore.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.example.bookstore.service;
 
-import com.modul2.bookstore.entities.User;
-import com.modul2.bookstore.repository.UserRepository;
+import com.example.bookstore.entities.User;
+import com.example.bookstore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;

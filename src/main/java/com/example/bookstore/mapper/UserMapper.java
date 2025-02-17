@@ -1,7 +1,7 @@
 package com.example.bookstore.mapper;
 
-import com.modul2.bookstore.dto.UserDTO;
-import com.modul2.bookstore.entities.User;
+import com.example.bookstore.dto.UserDTO;
+import com.example.bookstore.entities.User;
 
 public class UserMapper {
     public static User userDTO2User(UserDTO userDTO) {

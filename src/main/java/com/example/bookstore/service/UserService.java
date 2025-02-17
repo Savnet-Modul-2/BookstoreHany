@@ -1,15 +1,16 @@
 package com.example.bookstore.service;
 
-import com.modul2.bookstore.entities.User;
-import com.modul2.bookstore.repository.UserRepository;
+import com.example.bookstore.entities.User;
+import com.example.bookstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class UserService {
@@ -20,14 +21,11 @@ public class UserService {
     private EmailService emailService;
 
     public User create(User user) {
-        if(user.getId() != null) {
+        if (user.getId() != null) {
             throw new RuntimeException("You cannot provide an ID to a new user that you want to create");
         }
 
-        String md5Hex = DigestUtils
-                .md5Hex(user.getPassword()).toUpperCase();
-
-        user.setPassword(md5Hex);
+        user.setPassword(hashPassword(user.getPassword()));
 
         emailService.sendEmailVerification(user);
         return userRepository.save(user);
@@ -49,7 +47,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getById(Long userId){
+    public User getById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(EntityNotFoundException::new);
     }
@@ -72,9 +70,20 @@ public class UserService {
         updatedUser.setGender(userBody.getGender());
         updatedUser.setEmail(userBody.getEmail());
         updatedUser.setPhoneNumber(userBody.getPhoneNumber());
-        updatedUser.setPassword(DigestUtils.md5Hex(userBody.getPassword()).toUpperCase());
+        updatedUser.setPassword(hashPassword(userBody.getPassword()));
         updatedUser.setCountry(userBody.getCountry());
 
         return userRepository.save(updatedUser);
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes());
+            byte[] digest = md.digest();
+            return String.format("%032x", new BigInteger(1, digest)).toUpperCase();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5 algorithm not found", e);
+        }
     }
 }

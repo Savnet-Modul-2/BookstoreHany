@@ -22,22 +22,22 @@ public class UserService {
     private EmailService emailService;
 
     public User create(User user) {
-        if(user.getId() != null) {
-            throw new RuntimeException("You cannot provide an ID to a new user that you want to create");
-        }
+        String sha256Hex = DigestUtils.sha256Hex(user.getPassword()).toUpperCase();
+        user.setPassword(sha256Hex);
 
-        String md5Hex = DigestUtils
-                .md5Hex(user.getPassword()).toUpperCase();
+        String verificationCode = String.valueOf(new Random().nextInt(100000, 999999));
+        user.setVerificationCode(verificationCode);
+        user.setVerificationCodeTimeExpiration(LocalDateTime.now().plusMinutes(10));
+        user.setVerifiedAccount(false);
 
-        user.setPassword(md5Hex);
-
-        emailService.sendEmailVerification(user);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        emailService.sendEmailVerification(user.getEmail(), verificationCode);
+        return savedUser;
     }
 
     public User verifyCode(Long userId, String code) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found."));
 
         if (user.getVerificationCodeTimeExpiration().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("The verification code has expired.");
@@ -51,7 +51,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getById(Long userId){
+    public User getById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(EntityNotFoundException::new);
     }
@@ -82,13 +82,13 @@ public class UserService {
 
     public User login(String email, String password) throws InvalidPasswordException, AccountNotVerifiedException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email %s not found".formatted(email)));
+                .orElseThrow(() -> new EntityNotFoundException("User with email address %s not found.".formatted(email)));
 
-        if(!user.getVerifiedAccount()){
+        if (!user.getVerifiedAccount()) {
             throw new AccountNotVerifiedException("Account not verified.");
         }
 
-        if(!user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
             throw new InvalidPasswordException("Invalid password.");
         }
 

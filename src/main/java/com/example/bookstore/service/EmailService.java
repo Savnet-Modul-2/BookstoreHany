@@ -28,7 +28,7 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Verification code for authentication in bookstore app");
-        message.setText("Your verification code is : " + user.getVerificationCode());
+        message.setText("Your verification code is: " + user.getVerificationCode());
 
         mailSender.send(message);
     }

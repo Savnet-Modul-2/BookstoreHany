@@ -1,6 +1,8 @@
 package com.example.bookstore.service;
 
 import com.example.bookstore.entities.User;
+import com.example.bookstore.exceptions.AccountNotVerifiedException;
+import com.example.bookstore.exceptions.InvalidPasswordException;
 import com.example.bookstore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -76,5 +78,20 @@ public class UserService {
         updatedUser.setCountry(userBody.getCountry());
 
         return userRepository.save(updatedUser);
+    }
+
+    public User login(String email, String password) throws InvalidPasswordException, AccountNotVerifiedException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with email %s not found".formatted(email)));
+
+        if(!user.getVerifiedAccount()){
+            throw new AccountNotVerifiedException("Account not verified.");
+        }
+
+        if(!user.getPassword().equals(password)) {
+            throw new InvalidPasswordException("Invalid password.");
+        }
+
+        return userRepository.save(user);
     }
 }

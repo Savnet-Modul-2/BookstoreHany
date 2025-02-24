@@ -3,6 +3,8 @@ package com.example.bookstore.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity(name = "book")
@@ -10,7 +12,7 @@ import java.time.LocalDateTime;
 public class Book {
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  //genereaza automat id ul
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "TITLE")
@@ -34,6 +36,12 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "library_id")
     private Library library;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            fetch = FetchType.EAGER,
+            orphanRemoval = true,
+            mappedBy = "library")
+    private List<Unit> units = new ArrayList<>();
 
     public Long getId() {
         return id;

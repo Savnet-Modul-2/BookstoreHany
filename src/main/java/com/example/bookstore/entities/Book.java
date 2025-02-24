@@ -26,7 +26,7 @@ public class Book {
     private Integer nrOfPages;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private Genre genre;
 
     @Column(name = "LANGUAGE")
     private String language;
@@ -75,12 +75,12 @@ public class Book {
         this.nrOfPages = nrOfPages;
     }
 
-    public Category getCategory() {
-        return category;
+    public Genre getCategory() {
+        return genre;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory(Genre genre) {
+        this.genre = genre;
     }
 
     public String getLanguage() {

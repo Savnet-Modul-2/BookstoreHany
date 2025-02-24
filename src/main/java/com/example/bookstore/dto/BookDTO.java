@@ -1,6 +1,6 @@
 package com.example.bookstore.dto;
 
-import com.example.bookstore.entities.Category;
+import com.example.bookstore.entities.Genre;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +10,7 @@ public class BookDTO {
     private String author;
     private LocalDateTime appearanceDate;
     private Integer nrOfPages;
-    private Category category;
+    private Genre genre;
     private String language;
 
     public Long getId() {
@@ -53,12 +53,12 @@ public class BookDTO {
         this.nrOfPages = nrOfPages;
     }
 
-    public Category getCategory() {
-        return category;
+    public Genre getCategory() {
+        return genre;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory(Genre genre) {
+        this.genre = genre;
     }
 
     public String getLanguage() {

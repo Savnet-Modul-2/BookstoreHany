@@ -59,7 +59,7 @@ public class BookService {
         updatedBook.setAuthor(bookEntity.getAuthor());
         updatedBook.setAppearanceDate(bookEntity.getAppearanceDate());
         updatedBook.setNrOfPages(bookEntity.getNrOfPages());
-        updatedBook.setCategory(bookEntity.getCategory());
+        updatedBook.setGenre(bookEntity.getGenre());
         updatedBook.setLanguage(bookEntity.getLanguage());
 
         return bookRepository.save(updatedBook);

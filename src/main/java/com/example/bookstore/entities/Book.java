@@ -75,11 +75,11 @@ public class Book {
         this.nrOfPages = nrOfPages;
     }
 
-    public Genre getCategory() {
+    public Genre getGenre() {
         return genre;
     }
 
-    public void setCategory(Genre genre) {
+    public void setGenre(Genre genre) {
         this.genre = genre;
     }
 

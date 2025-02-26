@@ -18,6 +18,10 @@ public class Unit {
     @Column(name = "MAXIMUM_BOOKING_DURATION")
     private Integer maximumBookingDuration;
 
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
+
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
@@ -29,4 +33,8 @@ public class Unit {
     public Integer getMaximumBookingDuration() { return maximumBookingDuration; }
 
     public void setMaximumBookingDuration(Integer maximumBookingDuration) { this.maximumBookingDuration = maximumBookingDuration; }
+
+    public Book getBook() { return book; }
+
+    public void setBook(Book book) { this.book = book; }
 }

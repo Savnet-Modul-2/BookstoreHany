@@ -106,4 +106,13 @@ public class Book {
     public void setLibrary(Library library) {
         this.library = library;
     }
+
+    public List<Unit> getUnits() { return units; }
+
+    public void setUnits(List<Unit> units) { this.units = units; }
+
+    public void addUnit(Unit unit) {
+        this.units.add(unit);
+        unit.setBook(this);
+    }
 }

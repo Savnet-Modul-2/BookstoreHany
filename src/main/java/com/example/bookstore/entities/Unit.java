@@ -2,6 +2,9 @@ package com.example.bookstore.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "unit")
 @Table(name = "UNIT", schema = "public")
 
@@ -22,6 +25,12 @@ public class Unit {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true,
+            mappedBy = "exemplary")
+    private List<Reservation> reservations = new ArrayList<>();
+
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
@@ -37,4 +46,17 @@ public class Unit {
     public Book getBook() { return book; }
 
     public void setBook(Book book) { this.book = book; }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
+        reservation.setUnit(this);
+    }
 }

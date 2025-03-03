@@ -12,8 +12,8 @@ public class ReservationDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private Status status;
-    private User user;
-    private Unit unit;
+    private UserDTO user;
+    private UnitDTO unit;
 
     public Long getId() { return id; }
 
@@ -31,12 +31,13 @@ public class ReservationDTO {
 
     public void setStatus(Status status) { this.status = status; }
 
-    public User getUser() { return user; }
+    public UserDTO getUser() { return user; }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(UserDTO user) { this.user = user; }
 
-    public Unit getUnit() { return unit; }
+    public UnitDTO getUnit() { return unit; }
 
-    public void setUnit(Unit unit) { this.unit = unit; }
+    public void setUnit(UnitDTO unit) { this.unit = unit; }
+
 }
 

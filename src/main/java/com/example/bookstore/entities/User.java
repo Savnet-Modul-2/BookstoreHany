@@ -3,6 +3,8 @@ package com.example.bookstore.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "user")
 @Table(name = "USER", schema = "public")
@@ -44,6 +46,12 @@ public class User {
 
     @Column(name = "VERIFICATION_CODE_TIME_EXPIRATION")
     private LocalDateTime verificationCodeTimeExpiration;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true,
+            mappedBy = "user")
+    private List<Reservation> reservations = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -139,5 +147,18 @@ public class User {
 
     public void setVerificationCodeTimeExpiration(LocalDateTime verificationCodeTimeExpiration) {
         this.verificationCodeTimeExpiration = verificationCodeTimeExpiration;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public void addReservation(Reservation reservation) {
+        reservations.add(reservation);
+        reservation.setUser(this);
     }
 }

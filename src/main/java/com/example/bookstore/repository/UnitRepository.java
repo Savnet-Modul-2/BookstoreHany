@@ -12,16 +12,18 @@ import java.util.Optional;
 
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Long> {
-    @Query(value = """
-            SELECT * FROM exemplary e
-            WHERE e.id NOT IN (
-                SELECT r.exemplary_id FROM reservation r
-                WHERE (r.start_date <= :endDate OR r.end_date >= :startDate)
-                AND r.reservation_status IN ('IN_PROGRESS', 'PENDING')
-            )
-            AND e.book_id = :bookId
-            LIMIT 1
-            """, nativeQuery = true)
-    Optional<Unit> findAvailableUnit(Long bookId, LocalDate startDate, LocalDate endDate);
+    Page<Unit> getById(Long bookId, Pageable pageable);
+    void deleteById(Long unitId);
 
+    @Query(value = """
+        SELECT * FROM unit unit
+        WHERE unit.book_id = :bookId
+        AND unit.id NOT IN (
+            SELECT reservation.unit_id FROM reservation reservation
+            WHERE reservation.unit_id = unit.id
+            AND NOT (reservation.end_date < :startDate OR reservation.start_date > :endDate)
+        )
+        LIMIT 1
+    """, nativeQuery = true)
+    Optional<Unit> findAvailableUnit(Long bookId, LocalDate startDate, LocalDate endDate);
 }

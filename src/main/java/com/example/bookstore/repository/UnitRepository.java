@@ -16,13 +16,14 @@ public interface UnitRepository extends JpaRepository<Unit, Long> {
     void deleteById(Long unitId);
 
     @Query(value = """
-        SELECT * FROM unit unit
-        WHERE unit.book_id = :bookId
-        AND unit.id NOT IN (
-            SELECT reservation.unit_id FROM reservation reservation
-            WHERE reservation.unit_id = unit.id
-            AND NOT (reservation.end_date < :startDate OR reservation.start_date > :endDate)
+        SELECT * FROM unit
+        WHERE unit.id NOT IN (
+        SELECT reservation.unit_id FROM reservation
+        WHERE ((reservation.start_date <= :endDate AND reservation.end_date >= :startDate)
+        AND reservation.status IN ('IN_PROGRESS', 'PENDING'))
+        OR reservation.status = 'DELAYED'
         )
+        AND unit.book_id = :bookId
         LIMIT 1
     """, nativeQuery = true)
     Optional<Unit> findAvailableUnit(Long bookId, LocalDate startDate, LocalDate endDate);

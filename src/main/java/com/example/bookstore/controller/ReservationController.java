@@ -4,8 +4,10 @@ import com.example.bookstore.dto.ReservationDTO;
 import com.example.bookstore.entities.Reservation;
 import com.example.bookstore.mapper.ReservationMapper;
 import com.example.bookstore.service.ReservationService;
+import com.example.bookstore.validation.ValidationOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,16 +21,15 @@ public class ReservationController {
     @PostMapping("/{userId}/{bookId}")
     public ResponseEntity<?> reserveBook(@PathVariable(name = "userId") Long userId,
                                          @PathVariable(name = "bookId") Long bookId,
-                                         @RequestParam LocalDate startDate,
-                                         @RequestParam LocalDate endDate) {
-        Reservation createdReservation = reservationService.reserveBook(userId, bookId, startDate, endDate);
+                                         @Validated(ValidationOrder.class) @RequestBody ReservationDTO updatedReservationDTO) {
+        Reservation createdReservation = reservationService.reserveBook(userId, bookId, updatedReservationDTO.getStartDate(), updatedReservationDTO.getEndDate());
         return ResponseEntity.ok(ReservationMapper.reservation2ReservationDTO(createdReservation));
     }
 
     @PutMapping("/{librarianId}/{reservationId}")
     public ResponseEntity<?> changeStatus(@PathVariable Long librarianId,
                                           @PathVariable Long reservationId,
-                                          @RequestBody ReservationDTO updatedReservationDTO) {
+                                          @Validated(ValidationOrder.class) @RequestBody ReservationDTO updatedReservationDTO) {
         Reservation reservationToUpdate = ReservationMapper.reservationDTO2Reservation(updatedReservationDTO);
         Reservation updatedReservation = reservationService.changeStatus(librarianId,
                 reservationId, reservationToUpdate);

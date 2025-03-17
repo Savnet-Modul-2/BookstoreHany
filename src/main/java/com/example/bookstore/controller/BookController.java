@@ -27,35 +27,23 @@ public class BookController {
         return ResponseEntity.ok(BookMapper.book2BookDto(createdBook));
     }
 
-    @PostMapping("/library/{libraryId}")
-    public ResponseEntity<?> create(@PathVariable Long libraryId, @RequestBody BookDTO bookDTO) {
-        Book bookToCreate = BookMapper.bookDto2Book(bookDTO);
-        Book createdBook = bookService.create(libraryId, bookToCreate);
-        return ResponseEntity.ok(BookMapper.book2BookDto(createdBook));
-    }
-
-    @GetMapping("/paginated")
-    public ResponseEntity<?> findAllPaginated(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "title") String sortBy) {
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<Book> books = bookService.findAll(pageable);
-
-        return ResponseEntity.ok(books.map(BookMapper::book2BookDto));
-    }
-
     @GetMapping()
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<?> findAll(@RequestParam(name = "pageNumber", required = false) Integer pageNumber,
+                                     @RequestParam(name = "pageSize", required = false) Integer pageSize) {
+        if (pageSize != null && pageNumber != null) {
+            Page<Book> bookPage = bookService.findAll(PageRequest.of(pageNumber, pageSize));
+            return ResponseEntity.ok(bookPage.map(BookMapper::book2BookDto));
+        }
         List<Book> books = bookService.findAll();
-        return ResponseEntity.ok(books.stream().map(BookMapper::book2BookDto).toList());
+        return ResponseEntity.ok(books.stream()
+                .map(BookMapper::book2BookDto)
+                .toList());
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<?> getById(@PathVariable Long bookId) {
-        Book book = bookService.getById(bookId);
-        return ResponseEntity.ok(BookMapper.book2BookDto(book));
+    public ResponseEntity<?> getById(@PathVariable(name = "bookId") Long bookIdToSearchFor) {
+        Book foundBook = bookService.getById(bookIdToSearchFor);
+        return ResponseEntity.ok(BookMapper.book2BookDto(foundBook));
     }
 
     @DeleteMapping("/{bookId}")
@@ -71,9 +59,19 @@ public class BookController {
         return ResponseEntity.ok(BookMapper.book2BookDto(updatedBook));
     }
 
-    @DeleteMapping("/{bookId}/library")
-    public ResponseEntity<?> removeFromLibrary(@PathVariable Long bookId) {
-        bookService.removeFromLibrary(bookId);
-        return ResponseEntity.noContent().build();
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam(name = "bookAuthor", required = false) String bookAuthor,
+                                    @RequestParam(name = "bookTitle", required = false) String bookTitle,
+                                    @RequestParam(name = "pageNumber", required = false) Integer pageNumber,
+                                    @RequestParam(name = "pageSize", required = false) Integer pageSize) {
+        if (pageSize != null && pageNumber != null) {
+            Page<Book> bookPage = bookService.search(PageRequest.of(pageNumber, pageSize));
+            return ResponseEntity.ok(bookPage.map(BookMapper::book2BookDto));
+        }
+        List<Book> books = bookService.search(bookAuthor, bookTitle);
+        return ResponseEntity.ok(books.stream()
+                .map(BookMapper::book2BookDto)
+                .toList());
     }
 }

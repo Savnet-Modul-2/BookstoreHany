@@ -28,7 +28,7 @@ public class Unit {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.LAZY,
             orphanRemoval = true,
-            mappedBy = "exemplary")
+            mappedBy = "unit")
     private List<Reservation> reservations = new ArrayList<>();
 
     public Long getId() { return id; }

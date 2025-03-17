@@ -1,6 +1,7 @@
 package com.example.bookstore.dto;
 
 import com.example.bookstore.entities.Genre;
+import com.example.bookstore.entities.Library;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ public class BookDTO {
     private Integer nrOfPages;
     private Genre genre;
     private String language;
+    private LibraryDTO library;
 
     public Long getId() {
         return id;
@@ -68,4 +70,8 @@ public class BookDTO {
     public void setLanguage(String language) {
         this.language = language;
     }
+
+    public LibraryDTO getLibrary() { return library; }
+
+    public void setLibrary(LibraryDTO library) { this.library = library; }
 }

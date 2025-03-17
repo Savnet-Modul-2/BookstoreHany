@@ -7,9 +7,11 @@ import com.example.bookstore.exceptions.InvalidPasswordException;
 import com.example.bookstore.mapper.UserMapper;
 import com.example.bookstore.repository.UserRepository;
 import com.example.bookstore.service.UserService;
+import com.example.bookstore.validation.BasicValidation;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,8 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping()
-    public ResponseEntity<?> create(@RequestBody UserDTO userDTO) {
+    @PostMapping
+    public ResponseEntity<?> create(@Validated(BasicValidation.class) @RequestBody UserDTO userDTO) {
         User userToCreate = UserMapper.userDTO2User(userDTO);
         User createdUser = userService.create(userToCreate);
         return ResponseEntity.ok(UserMapper.user2UserDTO(createdUser));
@@ -37,16 +39,12 @@ public class UserController {
         return ResponseEntity.ok(UserMapper.user2UserDTO(foundUser));
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> findAll() {
         List<User> users = userService.findAll();
-        return ResponseEntity.ok(users.stream().map(UserMapper::user2UserDTO).toList());
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteById(@PathVariable(name = "userId") Long userIdToDelete) {
-        userService.deleteById(userIdToDelete);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(users.stream()
+                .map(UserMapper::user2UserDTO)
+                .toList());
     }
 
     @PutMapping("/{userId}")
@@ -56,9 +54,15 @@ public class UserController {
         return ResponseEntity.ok(UserMapper.user2UserDTO(updatedUser));
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteById(@PathVariable(name = "userId") Long userIdToDelete) {
+        userService.deleteById(userIdToDelete);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/verify")
-    public ResponseEntity<?> verifyCode(@RequestParam("userId") Long userId, @RequestParam("code") String code) {
-        User verifiedUser = userService.verifyCode(userId, code);
+    public ResponseEntity<?> verifyAccount(@RequestParam("userId") Long userId, @RequestParam("code") String code) {
+        User verifiedUser = userService.verifyAccount(userId, code);
         return ResponseEntity.ok(UserMapper.user2UserDTO(verifiedUser));
     }
 

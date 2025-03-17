@@ -38,9 +38,9 @@ public class Book {
     private Library library;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true,
-            mappedBy = "library")
+            mappedBy = "book")
     private List<Unit> units = new ArrayList<>();
 
     public Long getId() {
@@ -72,9 +72,12 @@ public class Book {
     }
 
     public void setAppearanceDate(LocalDateTime appearanceDate) {
-        this.appearanceDate = appearanceDate;
+        if (appearanceDate == null) {
+            this.appearanceDate = LocalDateTime.now();
+        } else {
+            this.appearanceDate = appearanceDate;
+        }
     }
-
     public Integer getNrOfPages() {
         return nrOfPages;
     }

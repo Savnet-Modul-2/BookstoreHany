@@ -7,7 +7,6 @@ public class LibraryDTO {
     private String name;
     private String address;
     private String phoneNumber;
-    private List<BookDTO> books;
 
     public Long getId() {
         return id;
@@ -39,13 +38,5 @@ public class LibraryDTO {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public List<BookDTO> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<BookDTO> books) {
-        this.books = books;
     }
 }

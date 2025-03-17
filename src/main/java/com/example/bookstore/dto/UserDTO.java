@@ -1,15 +1,21 @@
 package com.example.bookstore.dto;
 
+import com.example.bookstore.validation.BasicValidation;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 public class UserDTO {
     private Long id;
+    @NotNull(groups = BasicValidation.class)
     private String firstName;
     private String lastName;
     private Integer yearOfBirth;
     private String gender;
+    @NotNull(groups = BasicValidation.class)
     private String email;
     private String phoneNumber;
+    @NotNull(groups = BasicValidation.class)
     private String password;
     private String country;
     private Boolean verifiedAccount = false;

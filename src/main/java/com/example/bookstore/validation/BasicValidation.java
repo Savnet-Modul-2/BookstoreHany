@@ -1,4 +1,4 @@
 package com.example.bookstore.validation;
 
-public interface BasicInfo {
+public interface BasicValidation {
 }

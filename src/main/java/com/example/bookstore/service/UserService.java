@@ -26,16 +26,40 @@ public class UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new EntityExistsException("User with the email address %s already exists".formatted(user.getEmail()));
         }
-
         String encryptedPassword = DigestUtils
                 .md5Hex(user.getPassword()).toUpperCase();
         user.setPassword(encryptedPassword);
 
-        user.setVerificationCode(String.valueOf(new Random().nextInt(10000, 99999)));
+        String verificationCode = generateVerificationCode();
+        user.setVerificationCode(verificationCode);
         user.setVerificationCodeTimeExpiration(LocalDateTime.now().plusMinutes(5));
 
         emailService.sendEmailVerification(user.getEmail(), user.getVerificationCode());
         return userRepository.save(user);
+    }
+
+    public User resendVerificationCode(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationTime = user.getVerificationCodeTimeExpiration();
+
+        if (now.isBefore(expirationTime.minusMinutes(1))) {
+            emailService.sendEmailVerification(user.getEmail(), user.getVerificationCode());
+            return user;
+        }
+
+        String newCode = generateVerificationCode();
+        user.setVerificationCode(newCode);
+        user.setVerificationCodeTimeExpiration(now.plusMinutes(5));
+
+        emailService.sendEmailVerification(user.getEmail(), newCode);
+        return userRepository.save(user);
+    }
+
+    private String generateVerificationCode() {
+        return String.valueOf(new Random().nextInt(10000, 99999));
     }
 
     public User getById(Long userId) {

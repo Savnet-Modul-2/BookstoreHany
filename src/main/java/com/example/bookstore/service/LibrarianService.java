@@ -30,18 +30,42 @@ public class LibrarianService {
 
     public Librarian create(Librarian librarian) {
         if (librarianRepository.findByEmail(librarian.getEmail()).isPresent()) {
-            throw new EntityExistsException("Librarian with the email address %s already exists".formatted(librarian.getEmail()));
+            throw new EntityExistsException("User with the email address %s already exists".formatted(librarian.getEmail()));
         }
-
         String encryptedPassword = DigestUtils
                 .md5Hex(librarian.getPassword()).toUpperCase();
         librarian.setPassword(encryptedPassword);
 
-        librarian.setVerificationCode(String.valueOf(new Random().nextInt(10000, 99999)));
+        String verificationCode = generateVerificationCode();
+        librarian.setVerificationCode(verificationCode);
         librarian.setVerificationCodeTimeExpiration(LocalDateTime.now().plusMinutes(5));
 
         emailService.sendEmailVerification(librarian.getEmail(), librarian.getVerificationCode());
         return librarianRepository.save(librarian);
+    }
+
+    public Librarian resendVerificationCode(String email) {
+        Librarian librarian = librarianRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationTime = librarian.getVerificationCodeTimeExpiration();
+
+        if (now.isBefore(expirationTime.minusMinutes(1))) {
+            emailService.sendEmailVerification(librarian.getEmail(), librarian.getVerificationCode());
+            return librarian;
+        }
+
+        String newCode = generateVerificationCode();
+        librarian.setVerificationCode(newCode);
+        librarian.setVerificationCodeTimeExpiration(now.plusMinutes(5));
+
+        emailService.sendEmailVerification(librarian.getEmail(), newCode);
+        return librarianRepository.save(librarian);
+    }
+
+    private String generateVerificationCode() {
+        return String.valueOf(new Random().nextInt(10000, 99999));
     }
 
     public Librarian getById(Long librarianId) {

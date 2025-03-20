@@ -1,6 +1,7 @@
 package com.example.bookstore.controller;
 
 import com.example.bookstore.dto.LibrarianDTO;
+import com.example.bookstore.dto.UserDTO;
 import com.example.bookstore.entities.Librarian;
 import com.example.bookstore.entities.User;
 import com.example.bookstore.exceptions.AccountNotVerifiedException;
@@ -27,6 +28,12 @@ public class LibrarianController {
         Librarian librarianToCreate = LibrarianMapper.librarianDto2Librarian(librarianDTO);
         Librarian createdLibrarian = librarianService.create(librarianToCreate);
         return ResponseEntity.ok(LibrarianMapper.librarian2LibrarianDto(createdLibrarian));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerificationCode(@RequestParam("email") String email) {
+        Librarian librarian = librarianService.resendVerificationCode(email);
+        return ResponseEntity.ok("Verification code resent to " + librarian.getEmail());
     }
 
     @GetMapping("/{librarianId}")

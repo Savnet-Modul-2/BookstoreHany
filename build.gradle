@@ -30,6 +30,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'commons-codec:commons-codec:1.16.0'
+	runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
